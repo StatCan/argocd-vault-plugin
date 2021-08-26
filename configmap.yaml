@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+  namespace: argocd-operator-system
+data:
+  secret: <path:argocd/data/my-secret#my-value>

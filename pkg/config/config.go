@@ -75,6 +75,12 @@ func New(v *viper.Viper, co *Options) (*Config, error) {
 				} else {
 					return nil, fmt.Errorf("%s for github authentication cannot be empty", types.EnvAvpGithubToken)
 				}
+			case types.TokenAuth:
+				if v.IsSet(types.EnvAvpVaultToken) {
+					auth = vault.NewTokenAuth(v.GetString(types.EnvAvpVaultToken))
+				} else {
+					return nil, fmt.Errorf("%s for vaultAuth authentication cannot be empty", types.EnvAvpGithubToken)
+				}
 			case types.K8sAuth:
 				if v.IsSet(types.EnvAvpK8sRole) {
 					auth = vault.NewK8sAuth(
