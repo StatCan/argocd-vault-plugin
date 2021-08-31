@@ -27,6 +27,7 @@ import (
 type Options struct {
 	SecretName string
 	ConfigPath string
+	SecretNameServiceAccount string
 }
 
 // Config is used to decide the backend and auth type
@@ -41,7 +42,7 @@ func New(v *viper.Viper, co *Options) (*Config, error) {
 	v.SetDefault(types.EnvAvpKvVersion, "2")
 
 	// Read in config file or kubernetes secret and set as env vars
-	err := readConfigOrSecret(co.SecretName, co.ConfigPath, v)
+	err := readConfigOrSecret(co.SecretName, co.SecretNameServiceAccount, co.ConfigPath, v)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +151,7 @@ func New(v *viper.Viper, co *Options) (*Config, error) {
 	}, nil
 }
 
-func readConfigOrSecret(secretName, configPath string, v *viper.Viper) error {
+func readConfigOrSecret(secretName, secretNameServiceAccount, configPath string, v *viper.Viper) error {
 	// If a secret name is passed, pull config from Kubernetes
 	if secretName != "" {
 		localClient, err := kube.NewClient()
@@ -158,6 +159,18 @@ func readConfigOrSecret(secretName, configPath string, v *viper.Viper) error {
 			return err
 		}
 		yaml, err := localClient.ReadSecret(secretName)
+		if err != nil {
+			return err
+		}
+		v.SetConfigType("yaml")
+		v.ReadConfig(bytes.NewBuffer(yaml))
+	}
+	if secretNameServiceAccount  != "" {
+		localClient, err := kube.NewClient()
+		if err != nil {
+			return err
+		}
+		yaml, err := localClient.ReadSecretServiceAccount(secretNameServiceAccount)
 		if err != nil {
 			return err
 		}

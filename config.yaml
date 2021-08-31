@@ -1,4 +1,0 @@
-VAULT_ADDR: http://localhost:8200
-AVP_AUTH_TYPE: vaultAuth
-AVP_VAULT_TOKEN: jnhwshdio
-AVP_TYPE: vault
