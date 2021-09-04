@@ -31,10 +31,10 @@ func NewClient() (*Client, error) {
 	}, nil
 }
 
-// ReadSecret reads the specified Secret from the `argocd` namespace
+// ReadSecret reads the specified Secret from the specified namespace
 // and returns a YAML []byte containing its data, decoded from base64
-func (c *Client) ReadSecret(name string) ([]byte, error) {
-	s, err := c.client.CoreV1().Secrets("argocd").Get(context.TODO(), name, metav1.GetOptions{})
+func (c *Client) ReadSecret(name string, namespace string) ([]byte, error) {
+	s, err := c.client.CoreV1().Secrets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
